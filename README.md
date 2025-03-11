@@ -5,7 +5,7 @@ Author: Dylan Vo
 
 ## Introduction
 
-One thing that many people keep in mind when deciding on what dishes to consume is the healthiness of the recipe. Whether it is to lose weight, maintain health, or avoid harmful overindulgence, there are a number of reasons why one's health would be first priority when deciding what recipe to prepare for dinner. The World Health Organization reports that 73.6% of adults aged 20 or older are overweight, and 40.3% are obese. With this in mind, I focused on the healthiness of recipes, and how it impacted other statistics.
+One thing that many people keep in mind when deciding on what dishes to consume is the healthiness of the recipe. Whether it is to lose weight, maintain health, or avoid harmful overindulgence, there are a number of reasons why one's health would be first priority when deciding what recipe to prepare for dinner. The World Health Organization reports that 73.6% of adults aged 20 or older are overweight, and 40.3% are obese. With this in mind, I focused on the healthiness of recipes, how it changed over time, and what factors indicate to a recipe's healthiness.
 
 The dataset I am exploring this focus on is from [food.com](https://food.com), consisting of two CSVs. They contain data on recipes posted on the website and their reviews, with information from 2008 to 2018.
 
@@ -83,7 +83,12 @@ When all steps are completed, the dataset contains 234,429 rows and 21 columns, 
 
 For the single-variate analysis, I chose to examine the distribution of PDV_deviance, my measure of a recipe's healthiness. The graph is shown below.
 
-img.
+<iframe
+  src="assets/file-name.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
 
 As you can see, there are a few outliers that skew the graph. Once these are removed, we have this graph, shown below.
 
@@ -108,18 +113,39 @@ I believe that the `'rating'` column is NMAR, because of situations where users 
 The column I decided to examine missingness dependency on was `'id'`, determining if it was dependent on either `'minutes'` required to prepare the recipe or the `'submitted'` date of the recipe's publishing.
 
 > Minutes
-  Null Hypothesis:
+  **Null Hypothesis:**
   - The missingness of 'id' does not depend on the 'minutes' required to prepare the recipe, as listed on food.com 
 
-  Alternate Hypothesis:
+  **Alternate Hypothesis:**
   - The missingness of 'id' does depend on the 'minutes' required to prepare the recipe, as listed on food.com 
 
-  Test Statistic (Significance Level = 0.05):
+  **Test Statistic (Significance Level = 0.05):**
   - The absolute difference in means of the 'minutes' between the groups where 'id' is missing and 'id' is present
 
 I performed a permutation test by shuffling the values of `'id'` 1,000 times to obtain 1,000 test statistics, simulated under the null hypothesis.
 
 ## Hypothesis Testing
+
+As mentioned previously in  the introduction, I would like to examine how the healthiness, roughly aproximated by `'PDV_deviance'`, changed over time. To facilitate this question, I ran a permutation test based on the `'submitted'` date of the recipe. I chose do use a permutation test because the dataset has no information on the population, and question simply poses if the two groups originate from the same distribution.
+
+**Null Hypothesis:** 
+  - Recipes published before July, 2013 (midpoint of the date range) are as healthy as recipes published later, as determined by PDV_deviance 
+
+**Alternate Hypothesis:** 
+  - Recipes published before July, 2013 are healthier compared to recipes published later, as determined by PDV_deviance 
+
+**Test Statistic (0.05 Significance Level):**
+  - The difference in group means of new recipes' PDV and old recipes' PDV
+
+I chose this alternate hypothesis, because I believe that food trends towards unhealthy as time continues, and recipes published would reflect this trend. Because the hypothesis is directional, the test statistic is also directional, using the direct difference instead of absolute. A higher test statistic indicates recent recipes are more unhealthy than older recipes, and vice versa. As listed above, the data was split into two groups depending on if it was published in the earlier or later half of the dataset's date range.
+
+The observed test statistic is 23.7487.
+
+To perform the permutation test, the `'submitted'` column was shuffled 1,000 times, and 1,000 simulated mean differences were produced under the null hypothesis. The result was a p value of 0.0; results visualized below
+
+img
+
+
 
 ## Framing a Prediction Problem
 
