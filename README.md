@@ -5,7 +5,7 @@ Author: Dylan Vo
 
 ## Introduction
 
-One thing that many people keep in mind when deciding on what dishes to consume is the healthiness of the recipe. Whether it is to lose weight, maintain health, or avoid harmful overindulgence, there are a number of reasons why one's health would be first priority when deciding what recipe to prepare for dinner. The World Health Organization reports that 73.6% of adults aged 20 or older are overweight, and 40.3% are obese. With this in mind, I focused on the healthiness of recipes, how it changed over time, and what factors indicate to a recipe's healthiness.
+One thing that many people keep in mind when deciding on what dishes to consume is the healthiness of the recipe. Whether it is to lose weight, maintain health, or avoid harmful overindulgence, there are a number of reasons why one's health would be first priority when deciding what recipe to prepare for dinner. The World Health Organization reports that 73.6% of adults aged 20 or older are overweight, and 40.3% are obese. With this in mind, I focused on the healthiness of recipes, how it changed over time, and what factors indicate to a recipe's heartiness.
 
 The dataset I am exploring this focus on is from [food.com](https://food.com), consisting of two CSVs. They contain data on recipes posted on the website and their reviews, with information from 2008 to 2018.
 
@@ -63,13 +63,14 @@ To ease analysis and facilitate examination, the following Data Cleaning and Pro
   - These columns are similarly stored as the `'nutrition'` column, as a string formatted as a list. Converting them to actual lists makes the information easier to process and work with.
 
 8. Added the `'PDV_deviance'` column
-  - The column serves as a general measure of a recipe's healthiness
+  - The column serves as a summary measure of a recipe's healthiness, weighting its excess macronutrients against beneficial deficients
   - It is a sum of the difference between unhealthy macronutrients and calories, in PDV (unhealthy macros being sugar, sodium, sat. fats, and carbohydrates), minus the difference between caloric PDV and protein PDV
+  - The selection of healthy and unhealthy macronutrients was guided by the USDA's [Dietary Guidelines for Americans](https://www.dietaryguidelines.gov/sites/default/files/2020-12/Dietary_Guidelines_for_Americans_2020-2025.pdf), which encouraged consumption of protein from a variety of sources, as well as the limitation and moderation of added sugars, sodium, saturated fats, and refined carbohydrates
 
 9. Dropped unnecessary columns
   - Removed the columns that were either unneeded or redundant for this specific analysis, including  `'recipe_id'`, `'nutrition'`, `'review'`, `'description'`, and `'steps'`
 
-When all steps are completed, the dataset contains 234,429 rows and 21 columns, a small portion of which is shown below.
+When all steps are completed, the dataset contains 234,429 rows and 21 columns, a small portion of which is shown below. Scroll right to view more columns.
 
 |    | name                                 |     id |   minutes |   contributor_id | submitted           | tags                                                                                                                                                                                                                        |   n_steps | ingredients                                                                                                                                                                    |   n_ingredients |   user_id | date                |   rating |   avg_rating |   calories (PDV) |   total fat (PDV) |   sugar (PDV) |   sodium (PDV) |   protein (PDV) |   saturated fat (PDV) |   carbohydrates (PDV) |   PDV_deviance |
 |---:|:-------------------------------------|-------:|----------:|-----------------:|:--------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------:|----------:|:--------------------|---------:|-------------:|-----------------:|------------------:|--------------:|---------------:|----------------:|----------------------:|----------------------:|---------------:|
@@ -99,11 +100,19 @@ As you can see, there are a few outliers that skew the graph. Once these are rem
   frameborder="0"
 ></iframe>
 
-This shows a relatively normal distribution, with more weight on the right. It indicates that, on average, recipes are generally slightly more unhealthy on food.com, with a few largely unhealthy outliers.
+This shows a relatively normal distribution, with more weight on the right. It indicates that, on average, recipes are generally slightly more unhealthy on food.com, with a few largely unhealthy outliers. It also shows that most of the recipes fall between -100 and 200 PDV_deviance.
 
 ### Bivariate Analysis
 
+
+
 ### Interesting Aggregates
+
+An interesting aggregate I chose to highlight was how the different macronutrients roughly affected PDV, and how it related to the healthiness of a recipe. A recipe was considered high in a particular nutrient if its PDV exceeded caloric PDV, and healthy if it was below average PDV.
+
+|                                     |    False |      True |\n|:------------------------------------|---------:|----------:|\n| (False, False, False, False, False) | nan      | -17.802   |\n| (False, False, False, False, True)  | nan      | -69.0121  |\n| (False, False, False, True, False)  | nan      | -16.5409  |\n| (False, False, False, True, True)   | nan      | -39.305   |\n| (False, False, True, False, False)  | 871.674  |   6.08827 |\n| (False, False, True, False, True)   | 129      | -38.8351  |\n| (False, False, True, True, False)   | 117.463  |   4.76392 |\n| (False, False, True, True, True)    | 761.359  |  -9.57904 |\n| (False, True, False, False, False)  | 143.833  |  -4.71699 |\n| (False, True, False, False, True)   |  92.0207 | -45.5081  |\n| (False, True, False, True, False)   | nan      |   2.06454 |\n| (False, True, False, True, True)    | nan      | -18.939   |\n| (False, True, True, False, False)   | 131.337  |  19.3002  |\n| (False, True, True, False, True)    | 113.693  |  -7.01951 |\n| (False, True, True, True, False)    | 155.837  |  20.2965  |\n| (False, True, True, True, True)     | 147.644  |   7.35897 |\n| (True, False, False, False, False)  | 189.293  |  16.5479  |\n| (True, False, False, False, True)   | 109.931  | -17.9983  |\n| (True, False, False, True, False)   | 249.654  |  29.5751  |\n| (True, False, False, True, True)    | 117.338  |   2.76211 |\n| (True, False, True, False, False)   | 179.769  |  24.8433  |\n| (True, False, True, False, True)    | 123.548  |  -1.56491 |\n| (True, False, True, True, False)    | 337.577  |  29.522   |\n| (True, False, True, True, True)     | 221.24   |  17.5367  |\n| (True, True, False, False, False)   | 222.621  |  27.7258  |\n| (True, True, False, False, True)    | 141.638  |  -2.60327 |\n| (True, True, False, True, False)    | 285.858  |  35.334   |\n| (True, True, False, True, True)     | 163.9    |  21.192   |\n| (True, True, True, False, False)    | 162.582  |  27.4794  |\n| (True, True, True, False, True)     | 122.699  |  14.1425  |\n| (True, True, True, True, False)     | 215.678  |  35.9116  |\n| (True, True, True, True, True)      | 168.935  |  25.2546  |
+
+For example, the difference between the PDV of foods high in all nutrients versus the ones high in all but protein is about 40 PDV if the food is unhealthy. But for a food with those characteristics to be healthy, its average PDV is much, much lower. The graph helps illustrate the effect the individual nutrients have on PDV, and how healthy recipes and unhealthy recipes compare.
 
 ## Assessment of Missingness
 
@@ -118,6 +127,7 @@ I believe that the `'rating'` column is NMAR, because of situations where users 
 The column I decided to examine missingness dependency on was `'id'`, determining if it was dependent on either `'minutes'` required to prepare the recipe or the `'submitted'` date of the recipe's publishing.
 
 > Minutes
+
   **Null Hypothesis:**
   - The missingness of 'id' does not depend on the 'minutes' required to prepare the recipe, as listed on food.com 
 
@@ -139,6 +149,7 @@ I performed a permutation test by shuffling the values of `'id'` 1,000 times to 
 The observed test statistic, 29.2894, is shown by the vertical line on the graph. The p value we found is 0.019, which falls under the 0.05 threshold. Therefore we reject the null hypothesis and find that the missingness of `'id'` depends on the `'minutes'` of the recipe
 
 > Submitted
+
   **Null Hypothesis:**
   - The missingness of 'id' does not depend on the date 'submitted', as listed on food.com 
 
