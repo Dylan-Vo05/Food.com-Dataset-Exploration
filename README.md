@@ -81,11 +81,43 @@ When all steps are completed, the dataset contains 234,429 rows and 21 columns, 
 
 ### Univariate Analysis
 
+For the single-variate analysis, I chose to examine the distribution of PDV_deviance, my measure of a recipe's healthiness. The graph is shown below.
+
+img.
+
+As you can see, there are a few outliers that skew the graph. Once these are removed, we have this graph, shown below.
+
+img
+
+
+
 ### Bivariate Analysis
 
 ### Interesting Aggregates
 
 ## Assessment of Missingness
+
+There are 3 columns with nontrivial missingness from the original dataset, being `'id'`, `'contributor_id'`, and `'rating'`.
+
+### NMAR Analysis
+
+I believe that the `'rating'` column is NMAR, because of situations where users may accidentally submit ratings without inputting information or do so to remove notifications. Food.com will often prompt users to rate recipe pages they have recently visited, and if they wish to remove these prompts quickly, some may just submit ratings with no inputted data. Users may also do this on accident, leading to ratings being entered without the most critical data point. A way to cut down on this missingness may be to expunge reviews with entirely missing or useless data.
+
+## MAR Analysis
+
+The column I decided to examine missingness dependency on was `'id'`, determining if it was dependent on either `'minutes'` required to prepare the recipe or the `'submitted'` date of the recipe's publishing.
+
+> Minutes
+  Null Hypothesis:
+  - The missingness of 'id' does not depend on the 'minutes' required to prepare the recipe, as listed on food.com 
+
+  Alternate Hypothesis:
+  - The missingness of 'id' does depend on the 'minutes' required to prepare the recipe, as listed on food.com 
+
+  Test Statistic (Significance Level = 0.05):
+  - The absolute difference in means of the 'minutes' between the groups where 'id' is missing and 'id' is present
+
+I performed a permutation test by shuffling the values of `'id'` 1,000 times to obtain 1,000 test statistics, simulated under the null hypothesis.
 
 ## Hypothesis Testing
 
