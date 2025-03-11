@@ -71,11 +71,11 @@ To ease analysis and facilitate examination, the following Data Cleaning and Pro
 
 When all steps are completed, the dataset contains 234,429 rows and 21 columns
 
-# Univariate Analysis
+### Univariate Analysis
 
-# Bivariate Analysis
+### Bivariate Analysis
 
-# Interesting Aggregates
+### Interesting Aggregates
 
 ## Assessment of Missingness
 
