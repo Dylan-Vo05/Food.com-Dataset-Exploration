@@ -84,7 +84,7 @@ When all steps are completed, the dataset contains 234,429 rows and 21 columns, 
 For the single-variate analysis, I chose to examine the distribution of PDV_deviance, my measure of a recipe's healthiness. The graph is shown below.
 
 <iframe
-  src="assets/file-name.html"
+  src="assets/univariate1.html"
   width="800"
   height="600"
   frameborder="0"
@@ -92,9 +92,14 @@ For the single-variate analysis, I chose to examine the distribution of PDV_devi
 
 As you can see, there are a few outliers that skew the graph. Once these are removed, we have this graph, shown below.
 
-img
+<iframe
+  src="assets/univariate2.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
 
-
+This shows a relatively normal distribution, with more weight on the right. It indicates that, on average, recipes are generally slightly more unhealthy on food.com, with a few largely unhealthy outliers.
 
 ### Bivariate Analysis
 
@@ -124,6 +129,36 @@ The column I decided to examine missingness dependency on was `'id'`, determinin
 
 I performed a permutation test by shuffling the values of `'id'` 1,000 times to obtain 1,000 test statistics, simulated under the null hypothesis.
 
+<iframe
+  src="assets/missingness1.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+The observed test statistic, 29.2894, is shown by the vertical line on the graph. The p value we found is 0.019, which falls under the 0.05 threshold. Therefore we reject the null hypothesis and find that the missingness of `'id'` depends on the `'minutes'` of the recipe
+
+> Submitted
+  **Null Hypothesis:**
+  - The missingness of 'id' does not depend on the date 'submitted', as listed on food.com 
+
+  **Alternate Hypothesis:**
+  - The missingness of 'id' does depend on the date 'submitted', as listed on food.com 
+
+  **Test Statistic (Significance Level = 0.05):**
+  - The absolute difference in means of the 'submitted' date between the groups where 'id' is missing and 'id' is present
+
+I performed a permutation test by shuffling the values of `'id'` 1,000 times to obtain 1,000 test statistics, simulated under the null hypothesis.
+
+<iframe
+  src="assets/missingness2.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+The observed test statistic, 127,127.5489, is shown by the vertical line on the graph. The p value we found is 0.601, which exceeds the 0.05 threshold. Therefore we fail to reject the null hypothesis and find that the missingness of `'id'` does not depend on the date the recipe was `'submitted'`
+
 ## Hypothesis Testing
 
 As mentioned previously in  the introduction, I would like to examine how the healthiness, roughly aproximated by `'PDV_deviance'`, changed over time. To facilitate this question, I ran a permutation test based on the `'submitted'` date of the recipe. I chose do use a permutation test because the dataset has no information on the population, and question simply poses if the two groups originate from the same distribution.
@@ -143,9 +178,14 @@ The observed test statistic is 23.7487.
 
 To perform the permutation test, the `'submitted'` column was shuffled 1,000 times, and 1,000 simulated mean differences were produced under the null hypothesis. The result was a p value of 0.0; results visualized below
 
-img
+<iframe
+  src="assets/hypothesis.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
 
-
+Since the p value that we found is lower than the significance level of 0.05, we reject the null hypothesis. Recipes have not stayed the same level or improved in healthiness as time has progressed. A possible explanation is as I said above, that food becomes more unhealthy overtime, likely through increases in processed ingredients and additives. This could reflect in the kinds of recipes posted to food.com.
 
 ## Framing a Prediction Problem
 
