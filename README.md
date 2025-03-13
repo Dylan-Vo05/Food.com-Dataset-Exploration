@@ -85,7 +85,7 @@ When all steps are completed, the dataset contains 234,429 rows and 21 columns, 
 For the single-variate analysis, I chose to examine the distribution of PDV_deviance, my measure of a recipe's healthiness. The graph is shown below.
 
 <iframe
-  src="../assets/univariate1"
+  src="assets/univariate1.html"
   width="800"
   height="600"
   frameborder="0"
@@ -94,7 +94,7 @@ For the single-variate analysis, I chose to examine the distribution of PDV_devi
 As you can see, there are a few outliers that skew the graph. Once these are removed, we have this graph, shown below.
 
 <iframe
-  src="assets/univariate2"
+  src="assets/univariate2.html"
   width="800"
   height="600"
   frameborder="0"
@@ -110,7 +110,7 @@ This shows a relatively normal distribution, with more weight on the right. It i
 
 An interesting aggregate I chose to highlight was how the different macronutrients roughly affected PDV, and how it related to the healthiness of a recipe. A recipe was considered high in a particular nutrient if its PDV exceeded caloric PDV, and healthy if it was below average PDV.
 
-|                                     |    False |      True |\n|:------------------------------------|---------:|----------:|\n| (False, False, False, False, False) | nan      | -17.802   |\n| (False, False, False, False, True)  | nan      | -69.0121  |\n| (False, False, False, True, False)  | nan      | -16.5409  |\n| (False, False, False, True, True)   | nan      | -39.305   |\n| (False, False, True, False, False)  | 871.674  |   6.08827 |\n| (False, False, True, False, True)   | 129      | -38.8351  |\n| (False, False, True, True, False)   | 117.463  |   4.76392 |\n| (False, False, True, True, True)    | 761.359  |  -9.57904 |\n| (False, True, False, False, False)  | 143.833  |  -4.71699 |\n| (False, True, False, False, True)   |  92.0207 | -45.5081  |\n| (False, True, False, True, False)   | nan      |   2.06454 |\n| (False, True, False, True, True)    | nan      | -18.939   |\n| (False, True, True, False, False)   | 131.337  |  19.3002  |\n| (False, True, True, False, True)    | 113.693  |  -7.01951 |\n| (False, True, True, True, False)    | 155.837  |  20.2965  |\n| (False, True, True, True, True)     | 147.644  |   7.35897 |\n| (True, False, False, False, False)  | 189.293  |  16.5479  |\n| (True, False, False, False, True)   | 109.931  | -17.9983  |\n| (True, False, False, True, False)   | 249.654  |  29.5751  |\n| (True, False, False, True, True)    | 117.338  |   2.76211 |\n| (True, False, True, False, False)   | 179.769  |  24.8433  |\n| (True, False, True, False, True)    | 123.548  |  -1.56491 |\n| (True, False, True, True, False)    | 337.577  |  29.522   |\n| (True, False, True, True, True)     | 221.24   |  17.5367  |\n| (True, True, False, False, False)   | 222.621  |  27.7258  |\n| (True, True, False, False, True)    | 141.638  |  -2.60327 |\n| (True, True, False, True, False)    | 285.858  |  35.334   |\n| (True, True, False, True, True)     | 163.9    |  21.192   |\n| (True, True, True, False, False)    | 162.582  |  27.4794  |\n| (True, True, True, False, True)     | 122.699  |  14.1425  |\n| (True, True, True, True, False)     | 215.678  |  35.9116  |\n| (True, True, True, True, True)      | 168.935  |  25.2546  |
+'|    False |      True |\n|---------:|----------:|\n| nan      | -17.802   |\n| nan      | -69.0121  |\n| nan      | -16.5409  |\n| nan      | -39.305   |\n| 871.674  |   6.08827 |\n| 129      | -38.8351  |\n| 117.463  |   4.76392 |\n| 761.359  |  -9.57904 |\n| 143.833  |  -4.71699 |\n|  92.0207 | -45.5081  |\n| nan      |   2.06454 |\n| nan      | -18.939   |\n| 131.337  |  19.3002  |\n| 113.693  |  -7.01951 |\n| 155.837  |  20.2965  |\n| 147.644  |   7.35897 |\n| 189.293  |  16.5479  |\n| 109.931  | -17.9983  |\n| 249.654  |  29.5751  |\n| 117.338  |   2.76211 |\n| 179.769  |  24.8433  |\n| 123.548  |  -1.56491 |\n| 337.577  |  29.522   |\n| 221.24   |  17.5367  |\n| 222.621  |  27.7258  |\n| 141.638  |  -2.60327 |\n| 285.858  |  35.334   |\n| 163.9    |  21.192   |\n| 162.582  |  27.4794  |\n| 122.699  |  14.1425  |\n| 215.678  |  35.9116  |\n| 168.935  |  25.2546  |'
 
 For example, the difference between the PDV of foods high in all nutrients versus the ones high in all but protein is about 40 PDV if the food is unhealthy. But for a food with those characteristics to be healthy, its average PDV is much, much lower. The graph helps illustrate the effect the individual nutrients have on PDV, and how healthy recipes and unhealthy recipes compare.
 
