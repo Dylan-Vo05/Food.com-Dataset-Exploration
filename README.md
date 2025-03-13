@@ -85,7 +85,7 @@ When all steps are completed, the dataset contains 234,429 rows and 21 columns, 
 For the single-variate analysis, I chose to examine the distribution of PDV_deviance, my measure of a recipe's healthiness. The graph is shown below.
 
 <iframe
-  src="../assets/univariate1.html"
+  src="../assets/univariate1"
   width="800"
   height="600"
   frameborder="0"
@@ -94,7 +94,7 @@ For the single-variate analysis, I chose to examine the distribution of PDV_devi
 As you can see, there are a few outliers that skew the graph. Once these are removed, we have this graph, shown below.
 
 <iframe
-  src="../assets/univariate2.html"
+  src="assets/univariate2"
   width="800"
   height="600"
   frameborder="0"
