@@ -100,15 +100,33 @@ As you can see, there are a few outliers that skew the graph. Once these are rem
   frameborder="0"
 ></iframe>
 
-This shows a relatively normal distribution, with more weight on the right. It indicates that, on average, recipes are generally slightly more unhealthy on food.com, with a few largely unhealthy outliers. It also shows that most of the recipes fall between -100 and 200 PDV_deviance.
+This shows a relatively normal distribution, slightly more skewed to the right. It indicates that, on average, recipes are generally slightly more unhealthy on food.com, with a few largely unhealthy outliers. It also shows that most of the recipes fall between -100 and 200 PDV_deviance.
 
 ### Bivariate Analysis
 
+For bivariate analysis, I chose to examine a 'bad' nutrient, sugar, and a 'good' nutrient, protein, to see how they correlated with PDV_deviance.
 
+<iframe
+  src="assets/multivariate1.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+For this graph, while there is much grouping around the origin, there is also a clustered group that points upwards. This indicates positive correlation between sugar content and higher PDV_deviance, as sugar in food increases, the unhealthier it is likely to be.
+
+<iframe
+  src="assets/multivariate2.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+As shown here, protein has an opposite trend to sugar. Apart from the clustering around the origin, the graph shows negative correlation between protein and PDV. As protein content increases, PDV is more likely to be lower, and the food healthier.
 
 ### Interesting Aggregates
 
-An interesting aggregate I chose to highlight was how the different macronutrients roughly affected PDV, and how it related to the healthiness of a recipe. A recipe was considered high in a particular nutrient if its PDV exceeded caloric PDV, and healthy if it was below average PDV.
+An interesting aggregate I chose to highlight was how the different macronutrients roughly affected PDV, and how it related to the healthiness of a recipe. A recipe was considered high in a particular nutrient if its PDV exceeded caloric PDV, and healthy if it was below average PDV. `'high_fat'` was excluded for readability.
 
 <iframe
   src="assets/aggregate.html"
@@ -116,8 +134,7 @@ An interesting aggregate I chose to highlight was how the different macronutrien
   height="600"
   frameborder="0"
 ></iframe>
-
-For example, the difference between the PDV of foods high in all nutrients versus the ones high in all but protein is about 40 PDV if the food is unhealthy. But for a food with those characteristics to be healthy, its average PDV is much, much lower. The graph helps illustrate the effect the individual nutrients have on PDV, and how healthy recipes and unhealthy recipes compare.
+For example, the difference between the PDV of foods high in all nutrients versus the ones high in all but protein is about 80 PDV if the food is unhealthy. But for a food with those characteristics to be healthy, its average PDV is much, much lower. The graph helps illustrate the effect the individual nutrients have on PDV, and how healthy recipes and unhealthy recipes compare. It also provides some idea on the relationship between all of the nutrients, and how they ultimately come together into a food's `'PDV_deviance'`
 
 ## Assessment of Missingness
 
@@ -205,8 +222,46 @@ Since the p value that we found is lower than the significance level of 0.05, we
 
 ## Framing a Prediction Problem
 
+For the prediction problem, the goal is to predict the `'PDV_deviance'` of a recipe, which falls under the scope of a regression problem. This is due to PDV_deviance being a continous quantitative variable. It was chosen as it is this exploration's primary assessment of recipe healthiness, and predicting its value can be substantiated to predicting how healthy a recipe is.
+
+One limitation of the prediction is that, because `'PDV_deviance'` is an engineered column, the information used in its calculation cannot be used in the predictive model, as the model would simply recreate the formula. As such `'calories (PDV)'`, `'sodium (PDV'`, `'sugar (PDV)'`, `'saturated fats (PDV)'`, `'carbohydrates (PDV)'`, and `'protein (PDV)'` are not viable features for the model.
+
+The metrics I will use to evaluate both models are Mean Absolute Error (MAE) and R^2 score. MSE gives a good aproximation of the average error across the predicted values, while also being robust to outliers. This is an important consideration because, as seen in the first univariate graph, the dataset has a few outliers that could greatly skew MSE error calculations. R^2 is used as a way to measure how well the model captures the variance in `'PDV_deviance'`, an important factor in discussing the overall population of recipes.
+
 ## Baseline Model
+
+The baseline model uses a RandomForestRegressor and incorporates the features `'submitted'` and `'avg_rating'`. The dataset was split into training and test data, with a 75/25 split respectively.
+
+`'avg_rating'` is a continous quantative variable, which the model is able to process natively. However, because a small portion of the values of this column are Nan, some preprocessing has to be done to remove those columns, as the RandomForestRegressor does not accept Nan values. There is slight correlation between the average rating and PDV_deviance of a recipe, which is why it was chosen.
+
+`'submitted'` is also a continous quantative variable, stored in pd.Timestamp objects. Because of this, preprocessing has to be done, using `'FunctionTransformer'` to convert the column into floats, a datatype RandomForestRegressor can natively use. Additionally, I subtracted the earliest submitted recipe date from all the timestamp values, in order to reduce the size of the large numbers conversion would result in. It creates more precise prediction, as the values now start from zero. This variable was chosen due to the demonstrated relationship shown in the hypothesis section above.
+
+This model resulted in an MAE of 62.9146 and an R^2 value of 0.05955. This means that the average error on the model was quite large, and it was unable to capture the variance of the dataset much better than simply predicting the mean
 
 ## Final Model
 
+The final model also used a `'RandomForestRegressor'` and additionally included the features `'ingredients'`, `'tags'`, and `'minutes'`.
+
+`'avg_rating'` and `'submitted'` were processed the same as above.
+
+`'minutes'` is a discrete quantative variable that requires no preprocessing. It was chosen due to a slight correlation with `'PDV_deviance'`. Recipes with higher cooking times are typically baked dishes or centerpiece foods, typically high in sugars and carbohydrates, while healthy meals are typically quicker to prepare. So there is reasoning that longer cooking times indicate lower healthiness.
+
+`'ingredients'` and `'tags'` are both very similar, and thus, processed in the same way. They a list of items for each recipe, representing the ingredients used in the dish and the tags given to the recipe on food.com. To process this, I used `'MultiLabelBinarizer'` to create a binarized feature column for each unique item that appears in both columns. This requires a few extra steps to work properly. A list of all unique items that appear in each column in the entire dataset has to be prepared and given to the binarizer. This has to be done outside, because the training-test split means that there are different amounts of unique tags and ingredients that appear, causing a difference in feature amount. Additionally, because the list of unique items is so large, the binarizer has to use a sparse transformer to efficiently store the feature matrix and avoid overflow errors.
+
+The `'ingredients'` included in a recipe is a critical factor in determining how healthy a recipe is. More fruits and vegetables will indicate a healthier recipe, and sugars, fats, and oils could indicate unhealthy recipes. While the list doesn't take into account the portions of these ingredients, it is still a feature that could greatly contribute in predicting `'PDV_deviance'`.
+
+The `'tags'` attached to a recipe can also signal important information about a recipe's healthiness. Certain tags indicate what cultures foods come from, and because certain culture's cuisines are healthier than others, it can help predict healthiness. There are also tags for if a food is for holidays or events, often meaning the food is unhealthier. It is reasonable to believe there is a link between what tags are attached to a recipe, and its `'PDV_deviance'`.
+
+`'GridSearchCV'` was used to tune the `'n_estimators'` and `'max_depth'` hyperparameters of the `'RandomForestRegressor'`. Due to the high variance inherent in decision trees, optimizing these variables is key to avoiding overfitting. However, because of how large the feature set is for this model, I have to avoid hyperparameters that are too large, for both overflow avoidance and runtime efficiency. The best combination of hyperparameters that the Grid Search outputted was
+
+The MAE of the final model was ... and the R^2 was ...
+
 ## Fairness Analysis
+
+For the fairness analysis, the data was split into lower steps and higher steps, according to `'n_steps'`. The median number of steps is 9, and recipes were considered lower steps if they were less than 9, higher if they were equal or greater. Median was chosen to evenly split. A permutation test was then performed to determine if the model was fair, using the difference in MSE as the test statistic
+
+**Null Hypothesis:** The model is fair. The accuracy for long and short recipes is roughly similar, pulled from the same distribution.
+
+**Alternate Hypothesis:** The model is not fair. The accuracy for long and short recipes is dissimilar enough to not be a result of random chance.
+
+**Test Statistic (Significance Level = 0.05):** The difference in MAE between longer and shorter recipes.
