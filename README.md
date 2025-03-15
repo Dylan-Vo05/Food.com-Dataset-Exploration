@@ -236,7 +236,7 @@ The baseline model uses a RandomForestRegressor and incorporates the features `'
 
 `'submitted'` is also a continous quantative variable, stored in pd.Timestamp objects. Because of this, preprocessing has to be done, using `'FunctionTransformer'` to convert the column into floats, a datatype RandomForestRegressor can natively use. Additionally, I subtracted the earliest submitted recipe date from all the timestamp values, in order to reduce the size of the large numbers conversion would result in. It creates more precise prediction, as the values now start from zero. This variable was chosen due to the demonstrated relationship shown in the hypothesis section above.
 
-This model resulted in an MAE of 62.9146 and an R^2 value of 0.05955. This means that the average error on the model was quite large, and it was unable to capture the variance of the dataset much better than simply predicting the mean
+This model resulted in an MAE of 62.9146 and an R^2 value of 0.1859. This means that the average error on the model was quite large, and it was unable to capture the variance of the dataset much better than simply predicting the mean
 
 ## Final Model
 
@@ -252,16 +252,24 @@ The `'ingredients'` included in a recipe is a critical factor in determining how
 
 The `'tags'` attached to a recipe can also signal important information about a recipe's healthiness. Certain tags indicate what cultures foods come from, and because certain culture's cuisines are healthier than others, it can help predict healthiness. There are also tags for if a food is for holidays or events, often meaning the food is unhealthier. It is reasonable to believe there is a link between what tags are attached to a recipe, and its `'PDV_deviance'`.
 
-`'GridSearchCV'` was used to tune the `'n_estimators'` and `'max_depth'` hyperparameters of the `'RandomForestRegressor'`. Due to the high variance inherent in decision trees, optimizing these variables is key to avoiding overfitting. However, because of how large the feature set is for this model, I have to avoid hyperparameters that are too large, for both overflow avoidance and runtime efficiency. The best combination of hyperparameters that the Grid Search outputted was
+`'RandomizedSearchCV'` was used to tune the `'n_estimators'` and `'max_depth'` hyperparameters of the `'RandomForestRegressor'`. Due to the high variance inherent in decision trees, optimizing these variables is key to avoiding overfitting. However, because of how large the feature set is for this model, I have to avoid hyperparameters that are too large, for both overflow avoidance and runtime efficiency. The best combination of hyperparameters that the Grid Search outputted was 40 for both `'n_estimators'` and `'max_depth'`. I suspect larger values for both hyperparameters may be more optimal, but this causes the already substantial training time to balloon exponetially.
 
-The MAE of the final model was ... and the R^2 was ...
+The MAE of the final model was 40.5351 and the R^2 was 0.6790. This is a substantial improvement over the baseline model, as the average error is much lower and the dataset's variance is captured much more accurately.
 
 ## Fairness Analysis
 
-For the fairness analysis, the data was split into lower steps and higher steps, according to `'n_steps'`. The median number of steps is 9, and recipes were considered lower steps if they were less than 9, higher if they were equal or greater. Median was chosen to evenly split. A permutation test was then performed to determine if the model was fair, using the difference in MSE as the test statistic
+For the fairness analysis, the data was split into lower steps and higher steps, according to `'n_steps'`. The median number of steps is 9, and recipes were considered short if they were less than 9; long if they were equal or greater. Median was chosen to evenly split the data. A permutation test was then performed to determine if the model was fair, using the difference in MAE as the test statistic, due to outliers in the data.
 
 **Null Hypothesis:** The model is fair. The accuracy for long and short recipes is roughly similar, pulled from the same distribution.
 
 **Alternate Hypothesis:** The model is not fair. The accuracy for long and short recipes is dissimilar enough to not be a result of random chance.
 
-**Test Statistic (Significance Level = 0.05):** The difference in MAE between longer and shorter recipes.
+**Test Statistic (Significance Level = 0.05):** The absolute difference in MAE between longer and shorter recipes.
+
+<iframe
+  src="assets/fair.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+The observed difference in MAE between long and short recipes was 0.8139. Through the permutation test, we found 1000 simulated MAEs under the null hypothesis and found a p-value of 0.081. Because this p-value is greater than our significance level of 0.05, we fail to reject the null hypothesis. We cannot conclude that the model is unfair, or that its accuracy is different for longer and shorter recipes.
