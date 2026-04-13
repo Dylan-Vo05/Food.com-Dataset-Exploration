@@ -1,5 +1,4 @@
 # Exploration of the Healthiness of Recipes
-A project at UCSD for the DSC80 course
 
 Author: Dylan Vo
 
